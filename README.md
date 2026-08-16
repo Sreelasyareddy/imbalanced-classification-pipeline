@@ -1,6 +1,3 @@
-```
-```
-
 # ⚖️ Imbalanced Binary Classification Pipeline
 
 A modular, production-grade machine learning pipeline for binary classification on highly imbalanced tabular data (75/25 class split). Systematically compares **8 model configurations** — 4 classifiers × 2 resampling strategies (base vs SMOTE) — with XGBoost, automated hyperparameter tuning, ROC/PR curve analysis, and SHAP-ready explainability. Achieves **65.1% balanced accuracy (ROC-AUC 0.713)** on a 10,000-sample dataset, and reveals that SMOTE hurts 3 out of 4 classifiers when built-in class weighting is used.
@@ -27,16 +24,16 @@ Every model is tested both with and without SMOTE, producing a controlled experi
 
 ## ✨ Key Results
 
-| Model                   | CV Balanced Acc  | Val Balanced Acc | Val BER          | ROC-AUC          | PR-AUC           | Status             |
-| ----------------------- | ---------------- | ---------------- | ---------------- | ---------------- | ---------------- | ------------------ |
+| Model | CV Balanced Acc | Val Balanced Acc | Val BER | ROC-AUC | PR-AUC | Status |
+|---|---|---|---|---|---|---|
 | **Random Forest** | **0.6421** | **0.6512** | **0.3488** | **0.7133** | **0.4808** | **Selected** |
-| SVM (RBF)               | 0.6539           | 0.6478           | 0.3522           | 0.7000           | 0.4399           |                    |
-| XGBoost                 | 0.6563           | 0.6470           | 0.3530           | 0.7125           | 0.4589           |                    |
-| SMOTE+XGBoost           | 0.6615           | 0.6442           | 0.3558           | 0.7175           | 0.4786           |                    |
-| SMOTE+LR                | 0.6454           | 0.6337           | 0.3663           | 0.6887           | 0.4166           |                    |
-| Logistic Regression     | 0.6462           | 0.6331           | 0.3669           | 0.6884           | 0.4158           |                    |
-| SMOTE+SVM               | 0.6350           | 0.6317           | 0.3683           | 0.6773           | 0.4217           |                    |
-| SMOTE+RF                | 0.6017           | 0.6183           | 0.3817           | 0.7196           | 0.4904           |                    |
+| SVM (RBF) | 0.6539 | 0.6478 | 0.3522 | 0.7000 | 0.4399 | |
+| XGBoost | 0.6563 | 0.6470 | 0.3530 | 0.7125 | 0.4589 | |
+| SMOTE+XGBoost | 0.6615 | 0.6442 | 0.3558 | 0.7175 | 0.4786 | |
+| SMOTE+LR | 0.6454 | 0.6337 | 0.3663 | 0.6887 | 0.4166 | |
+| Logistic Regression | 0.6462 | 0.6331 | 0.3669 | 0.6884 | 0.4158 | |
+| SMOTE+SVM | 0.6350 | 0.6317 | 0.3683 | 0.6773 | 0.4217 | |
+| SMOTE+RF | 0.6017 | 0.6183 | 0.3817 | 0.7196 | 0.4904 | |
 
 **Key Finding:** SMOTE degraded validation performance for 3 out of 4 classifiers (RF, SVM, XGBoost), demonstrating that synthetic oversampling isn't universally beneficial — models with built-in class weighting already handle imbalance effectively. Only Logistic Regression showed marginal improvement with SMOTE (+0.0006 BER), suggesting SMOTE primarily helps models that lack native imbalance handling.
 
@@ -95,21 +92,21 @@ Instead of just picking one resampling strategy, this pipeline runs a **controll
 
 ### Models Compared
 
-| Model                         | Imbalance Handling (Base)                     | + SMOTE                                    |
-| ----------------------------- | --------------------------------------------- | ------------------------------------------ |
-| **XGBoost**             | `scale_pos_weight` adjusts gradient         | Synthetic minority samples before training |
-| **Random Forest**       | `class_weight='balanced'` adjusts splitting | Synthetic minority samples before training |
-| **SVM (RBF)**           | `class_weight='balanced'` adjusts penalty   | Synthetic minority samples before training |
-| **Logistic Regression** | `class_weight='balanced'` adjusts loss      | Synthetic minority samples before training |
+| Model | Imbalance Handling (Base) | + SMOTE |
+|---|---|---|
+| **XGBoost** | `scale_pos_weight` adjusts gradient | Synthetic minority samples before training |
+| **Random Forest** | `class_weight='balanced'` adjusts splitting | Synthetic minority samples before training |
+| **SVM (RBF)** | `class_weight='balanced'` adjusts penalty | Synthetic minority samples before training |
+| **Logistic Regression** | `class_weight='balanced'` adjusts loss | Synthetic minority samples before training |
 
 ### Evaluation Metrics
 
-| Metric                      | Why It Matters for Imbalanced Data                        |
-| --------------------------- | --------------------------------------------------------- |
-| **Balanced Accuracy** | Averages per-class recall — immune to class imbalance    |
-| **BER**               | 1 − Balanced Accuracy — the primary optimization target |
-| **ROC-AUC**           | Measures ranking quality across all thresholds            |
-| **PR-AUC**            | More informative than ROC when positive class is rare     |
+| Metric | Why It Matters for Imbalanced Data |
+|---|---|
+| **Balanced Accuracy** | Averages per-class recall — immune to class imbalance |
+| **BER** | 1 − Balanced Accuracy — the primary optimization target |
+| **ROC-AUC** | Measures ranking quality across all thresholds |
+| **PR-AUC** | More informative than ROC when positive class is rare |
 
 ---
 
@@ -195,11 +192,11 @@ jupyter notebook eda.ipynb
 
 The dataset has three distinct feature types, each requiring different treatment. A single `ColumnTransformer` applies all transformations *inside* the cross-validation loop, preventing data leakage.
 
-| Feature Type            | Columns     | Strategy                          |
-| ----------------------- | ----------- | --------------------------------- |
-| **Ordinal** (3)   | x2, x3, x4  | Mode imputation → OrdinalEncoder |
-| **Numerical** (7) | x15–x21    | Mean imputation → StandardScaler |
-| **Binary** (11)   | x1, x5–x14 | Mode imputation (passthrough)     |
+| Feature Type | Columns | Strategy |
+|---|---|---|
+| **Ordinal** (3) | x2, x3, x4 | Mode imputation → OrdinalEncoder |
+| **Numerical** (7) | x15–x21 | Mean imputation → StandardScaler |
+| **Binary** (11) | x1, x5–x14 | Mode imputation (passthrough) |
 
 ### SMOTE Integration via imbalanced-learn
 
@@ -229,16 +226,16 @@ Each model produces calibrated probability scores via `predict_proba()`. These s
 
 Running `python main.py --save-plots` generates these in `output/`:
 
-| Plot                            | What It Shows                                         |
-| ------------------------------- | ----------------------------------------------------- |
-| `class_distribution.png`      | Target class imbalance with ratio annotation          |
-| `correlation_matrix.png`      | Feature correlation heatmap                           |
-| `model_comparison.png`        | Grouped bar chart: CV, Val Balanced Acc, ROC-AUC      |
-| `confusion_matrices.png`      | Side-by-side confusion matrices (top 4 models)        |
-| `roc_curves.png`              | Overlaid ROC curves with AUC for all 8 experiments    |
-| `precision_recall_curves.png` | Overlaid PR curves with Average Precision             |
-| `smote_impact.png`            | Base vs SMOTE BER comparison per classifier           |
-| `feature_importance.png`      | Top features by importance (if tree-based model wins) |
+| Plot | What It Shows |
+|---|---|
+| `class_distribution.png` | Target class imbalance with ratio annotation |
+| `correlation_matrix.png` | Feature correlation heatmap |
+| `model_comparison.png` | Grouped bar chart: CV, Val Balanced Acc, ROC-AUC |
+| `confusion_matrices.png` | Side-by-side confusion matrices (top 4 models) |
+| `roc_curves.png` | Overlaid ROC curves with AUC for all 8 experiments |
+| `precision_recall_curves.png` | Overlaid PR curves with Average Precision |
+| `smote_impact.png` | Base vs SMOTE BER comparison per classifier |
+| `feature_importance.png` | Top features by importance (if tree-based model wins) |
 
 ---
 
@@ -255,15 +252,15 @@ Running `python main.py --save-plots` generates these in `output/`:
 
 ## 🛠️ Tech Stack
 
-| Technology                     | Purpose                                               |
-| ------------------------------ | ----------------------------------------------------- |
-| **Python 3.9+**          | Core language                                         |
-| **scikit-learn**         | Pipelines, GridSearchCV, metrics, base classifiers    |
-| **XGBoost**              | Gradient boosted trees with native imbalance handling |
-| **imbalanced-learn**     | SMOTE resampling integrated into sklearn pipelines    |
-| **matplotlib / seaborn** | ROC, PR, confusion matrices, comparison charts        |
-| **pandas / NumPy**       | Data manipulation and computation                     |
-| **SHAP**                 | Model explainability (ready for integration)          |
+| Technology | Purpose |
+|---|---|
+| **Python 3.9+** | Core language |
+| **scikit-learn** | Pipelines, GridSearchCV, metrics, base classifiers |
+| **XGBoost** | Gradient boosted trees with native imbalance handling |
+| **imbalanced-learn** | SMOTE resampling integrated into sklearn pipelines |
+| **matplotlib / seaborn** | ROC, PR, confusion matrices, comparison charts |
+| **pandas / NumPy** | Data manipulation and computation |
+| **SHAP** | Model explainability (ready for integration) |
 
 ---
 
